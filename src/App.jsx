@@ -8,6 +8,7 @@ import AboutOverview from './components/AboutOverview';
 import CurriculumExplorer from './components/CurriculumExplorer';
 import FacilitiesSection from './components/FacilitiesSection';
 import SpecialMomentsSection from './components/SpecialMomentsSection';
+import CompetitionsSection from './components/CompetitionsSection';
 import Footer from './components/Footer';
 import { CheckCircle2, X, ArrowUp } from 'lucide-react';
 
@@ -113,6 +114,7 @@ export default function App() {
         <CurriculumExplorer onNavigate={scrollToSection} />
         <FacilitiesSection />
         <SpecialMomentsSection />
+        <CompetitionsSection />
       </main>
 
       {/* Footer */}
