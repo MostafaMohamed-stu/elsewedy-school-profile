@@ -485,6 +485,106 @@ input[type="range"]::-webkit-slider-thumb:hover {
   filter: brightness(1.04);
 }
 
+/* Competition cards: three across on desktop, then collapse cleanly. */
+.competitions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+@keyframes competitionSlideNext {
+  from { opacity: 0; transform: translateX(7%) scale(1.025); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes competitionSlidePrevious {
+  from { opacity: 0; transform: translateX(-7%) scale(1.025); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+.competition-slide-image {
+  display: block;
+  will-change: transform, opacity;
+  animation: competitionSlideNext .7s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.competition-slide-image.slide-previous {
+  animation-name: competitionSlidePrevious;
+}
+
+.competition-slide-control {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, .45);
+  border-radius: 50%;
+  background: rgba(17, 24, 39, .58);
+  color: #fff;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(-50%) scale(.9);
+  transition: opacity .2s ease, transform .2s ease, background .2s ease;
+}
+
+.competition-slide-control.previous { left: 14px; }
+.competition-slide-control.next { right: 14px; }
+
+.competition-slideshow:hover .competition-slide-control,
+.competition-slide-control:focus-visible {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.competition-slide-control:hover { background: rgba(218, 27, 27, .9); }
+
+.competition-slide-dot {
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, .9);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .25);
+  cursor: pointer;
+  transition: width .25s ease, background .25s ease, transform .25s ease;
+}
+
+.competition-slide-dot[aria-current='true'] { background: var(--primary-red); }
+.competition-slide-dot:hover { transform: scaleY(1.35); }
+
+@media (max-width: 640px) {
+  .competition-slideshow {
+    min-height: 230px !important;
+    max-height: 42vh !important;
+  }
+
+  .competition-slide-control {
+    opacity: 1;
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .competition-slide-image { animation: none; }
+}
+
+@media (max-width: 960px) {
+  .competitions-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .competitions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Heartbeat Animation for Upvoting */
 @keyframes heartBeat {
   0% { transform: scale(1); }

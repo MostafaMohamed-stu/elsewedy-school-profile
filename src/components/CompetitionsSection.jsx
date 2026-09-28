@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Award, CheckCircle2, ChevronRight, Images, Trophy, X } from 'lucide-react';
+import { Award, CheckCircle2, ChevronLeft, ChevronRight, Images, Trophy, X } from 'lucide-react';
 import Reveal from './common/Reveal';
 import { useLanguage } from '../i18n/LanguageContext';
 
@@ -13,7 +13,7 @@ const competitions = [
     images: [
       '/assets/competitions/iymc-logo.png',
       '/assets/competitions/iymc-student-1.jfif',
-      '/assets/competitions/iymc-student-2.jfif'
+      '/assets/competitions/iymc-student-2-wide.png'
     ],
     whatWeDo: [
       ['🧠', 'Problem-Solving', 'Solve challenging mathematical problems using logical and creative approaches.'],
@@ -69,7 +69,7 @@ const competitions = [
     shortDescription: 'An innovation and technology competition where students turn creative technology-based solutions into practical projects and prototypes.',
     description: 'Tech Tank is an innovation and technology competition that challenges students to develop creative technology-based solutions to real-world problems. Participants transform their ideas into practical projects, build prototypes, and present their solutions to a panel of judges.',
     images: [
-      '/assets/competitions/tech-tank-logo.jfif',
+      '/assets/competitions/tech-tank-banner-ai.png',
       '/assets/competitions/tech-tank-team-1.jfif',
       '/assets/competitions/tech-tank-team-2.jfif',
       '/assets/competitions/tech-tank-team-3.jfif',
@@ -102,8 +102,8 @@ const competitions = [
     description: 'The Arab Programming Week 2024 was the fourth edition of an Arab regional initiative organized by ALECSO in cooperation with the King Salman Global Academy for Arabic Language and the Tunisian Association for Educational Initiatives. The 2024 edition focused on “Smart Applications for the Arabic Language”, combining programming, artificial intelligence, and digital creativity to develop students’ technological skills.',
     images: [
       '/assets/competitions/arab-programming-week-cover.jfif',
-      '/assets/competitions/arab-programming-week-team-1.jfif',
-      '/assets/competitions/arab-programming-week-team-2.jfif'
+      '/assets/competitions/arab-programming-week-team-1-wide.png',
+      '/assets/competitions/arab-programming-week-team-2-wide.png'
     ],
     whatWeDo: [
       ['💻', 'Develop Programming Skills', 'Create websites, applications, games, and other digital projects.'],
@@ -130,9 +130,9 @@ const competitions = [
     shortDescription: 'An innovation and technology competition where students transform creative, technology-driven solutions into practical projects and prototypes.',
     description: 'Next Era is an innovation and technology competition that encourages students to develop creative, technology-driven solutions to real-world challenges. It provides students with an opportunity to transform their ideas into practical projects, develop prototypes, and present their solutions in a competitive environment.',
     images: [
-      '/assets/competitions/next-era-cover.jfif',
+      '/assets/competitions/next-era-banner-ai.png',
       '/assets/competitions/next-era-team-1.jfif',
-      '/assets/competitions/next-era-team-2.jfif',
+      '/assets/competitions/next-era-team-2-wide.png',
       '/assets/competitions/next-era-team-3.jfif'
     ],
     whatWeDo: [
@@ -160,10 +160,10 @@ const competitions = [
     shortDescription: 'Egypt’s national competitive programming contest, challenging three-person teams to solve advanced algorithmic problems under time pressure.',
     description: 'The Egyptian Collegiate Programming Contest (ECPC) is Egypt’s national competitive programming contest for university students and serves as the official qualifying competition for the Africa & Arab Collegiate Programming Championship (ACPC). Teams of three students solve challenging algorithmic problems under time constraints, developing advanced problem-solving, algorithmic thinking, teamwork, and programming skills.',
     images: [
-      '/assets/competitions/ecpc-team-1.jfif',
-      '/assets/competitions/ecpc-team-2.jfif',
+      '/assets/competitions/ecpc-team-1-wide.png',
+      '/assets/competitions/ecpc-team-2-wide.png',
       '/assets/competitions/ecpc-team-3.jfif',
-      '/assets/competitions/ecpc-team-4.jfif',
+      '/assets/competitions/ecpc-team-4-wide.png',
       '/assets/competitions/ecpc-team-5.jfif'
     ],
     whatWeDo: [
@@ -193,8 +193,8 @@ const competitions = [
     description: 'EISTF hosts an annual event for students from all over Egypt, as well as other countries, to showcase their research and compete for awards in different categories. The fair expands students’ minds, deepens their creativity, and helps them develop interpersonal and professional skills, equipping participants to apply their experiences to future careers and projects.',
     images: [
       '/assets/competitions/eistf-logo.png',
-      '/assets/competitions/eistf-awards.jfif',
-      '/assets/competitions/eistf-students.jfif'
+      '/assets/competitions/eistf-awards-wide.png',
+      '/assets/competitions/eistf-students-wide.png'
     ],
     whatWeDo: [
       ['🔬', 'Scientific Research', 'Explore real-world problems and develop research-based solutions.'],
@@ -254,7 +254,7 @@ function CompetitionImage({ competition, onOpen }) {
       style={{ background: '#fff', border: '1px solid #E5E7EB', borderRadius: 14, overflow: 'hidden', cursor: 'pointer', boxShadow: '0 4px 14px rgba(0,0,0,.04)', height: '100%' }}
     >
       <div className="img-zoom-container" style={{ height: 250, background: '#F8FAFC' }}>
-        <img src={competition.images[0]} alt={competition.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+        <img src={competition.images[0]} alt={competition.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         <span style={{ position: 'absolute', top: 12, left: 12, display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(17,24,39,.86)', color: '#fff', padding: '6px 11px', borderRadius: 999, fontSize: 11, fontWeight: 700 }}>
           <Images size={14} /> {competition.images.length} {competition.images.length === 1 ? 'photo' : 'photos'} inside
         </span>
@@ -273,24 +273,52 @@ function CompetitionImage({ competition, onOpen }) {
 
 function CompetitionSlideshow({ competition }) {
   const [imageIndex, setImageIndex] = useState(0);
+  const [direction, setDirection] = useState('next');
+  const activeImage = competition.images[imageIndex];
+  const isGraphic = /(?:logo|cover)\./i.test(activeImage);
+
+  const showImage = (nextIndex, nextDirection = 'next') => {
+    setDirection(nextDirection);
+    setImageIndex((nextIndex + competition.images.length) % competition.images.length);
+  };
 
   useEffect(() => {
+    if (competition.images.length < 2) return undefined;
     const timer = window.setInterval(() => {
+      setDirection('next');
       setImageIndex((current) => (current + 1) % competition.images.length);
-    }, 2000);
+    }, 3500);
     return () => window.clearInterval(timer);
   }, [competition.images.length]);
 
   return (
-    <div style={{ position: 'relative', height: 270, background: '#F8FAFC', overflow: 'hidden' }}>
+    <div
+      className="competition-slideshow"
+      style={{ position: 'relative', aspectRatio: '16 / 9', minHeight: 320, maxHeight: 'min(52vh, 440px)', background: isGraphic ? '#fff' : '#111827', overflow: 'hidden' }}
+    >
       <img
+        key={`${competition.id}-${imageIndex}`}
+        className={`competition-slide-image slide-${direction}`}
         src={competition.images[imageIndex]}
         alt={`${competition.name} — image ${imageIndex + 1}`}
-        style={{ width: '100%', height: '100%', objectFit: imageIndex === 0 ? 'contain' : 'cover', transition: 'opacity .35s ease' }}
+        style={{ width: '100%', height: '100%', objectFit: isGraphic ? 'contain' : 'cover', objectPosition: 'center' }}
       />
+      {competition.images.length > 1 && (
+        <>
+          <button className="competition-slide-control previous" onClick={() => showImage(imageIndex - 1, 'previous')} aria-label="Previous photo"><ChevronLeft size={22} /></button>
+          <button className="competition-slide-control next" onClick={() => showImage(imageIndex + 1, 'next')} aria-label="Next photo"><ChevronRight size={22} /></button>
+        </>
+      )}
       <div style={{ position: 'absolute', left: 16, bottom: 14, display: 'flex', gap: 6 }}>
         {competition.images.map((_, index) => (
-          <span key={index} style={{ width: index === imageIndex ? 20 : 8, height: 8, borderRadius: 99, background: index === imageIndex ? 'var(--primary-red)' : 'rgba(255,255,255,.9)', boxShadow: '0 1px 4px rgba(0,0,0,.25)', transition: 'all .25s' }} />
+          <button
+            key={index}
+            className="competition-slide-dot"
+            onClick={() => showImage(index, index < imageIndex ? 'previous' : 'next')}
+            aria-label={`Show photo ${index + 1}`}
+            aria-current={index === imageIndex ? 'true' : undefined}
+            style={{ width: index === imageIndex ? 20 : 8 }}
+          />
         ))}
       </div>
     </div>
@@ -317,7 +345,7 @@ export default function CompetitionsSection() {
             <p>{isArabic ? 'مساحات تنافسية تطور مهارات طلابنا وتبرز إنجازاتهم محليًا ودوليًا' : 'Competitive experiences that develop our students’ skills and celebrate their achievements locally and internationally'}</p>
           </div>
         </Reveal>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 390px))', gap: 24, justifyContent: 'center' }}>
+        <div className="competitions-grid">
           {competitions.map((competition, index) => (
             <Reveal key={competition.id} effect="fade-up" delay={index * 100}>
               <CompetitionImage competition={competition} onOpen={() => setSelected(competition)} />
